@@ -12,7 +12,8 @@ import {
 import { Car, Trip } from '../lib/api';
 
 interface Props {
-  trips: Trip[];
+  car: Car;
+  trip: Trip;
   inputs: Car[];
   tripName: string;
   showSavings: boolean;
@@ -25,7 +26,7 @@ function getYAxisLabel(comparison: string, savings: boolean) {
     if (savings) {
       return 'Trip Cost Savings (dollars)';
     }
-    return 'Trip Cost  (dollars)';
+    return 'Trip Cost (dollars)';
   }
   if (savings) {
     return 'Trip Emmission Savings (lbs CO2)';
@@ -34,7 +35,8 @@ function getYAxisLabel(comparison: string, savings: boolean) {
 }
 
 function Chart({
-  trips,
+  trip,
+  car,
   inputs,
   tripName,
   showSavings,
@@ -42,9 +44,7 @@ function Chart({
   carFuel,
 }: Props) {
   const audiQ7 = R.find(R.propEq('fuelType', 'Gasoline'))(inputs) as Car;
-  const car = R.find(R.propEq('name', tripName))(inputs) as Car;
-  const trip = R.find(R.propEq('name', tripName))(trips) as Trip;
-
+  console.log(inputs);
   const audiData = calcTrip({
     fuel: 'gas',
     trip,
@@ -57,6 +57,8 @@ function Chart({
     car,
     comparison,
   });
+
+  console.log(carData);
 
   const savingsData = calcSavingsData(audiData, carData);
 

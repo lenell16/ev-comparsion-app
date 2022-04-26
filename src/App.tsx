@@ -12,10 +12,28 @@ function App() {
   const [comparison, setComparsion] = useState<Comparison>('cost');
   const [showSavings, setShowSavings] = useState(false);
   const [fuelType, setFuelType] = useState<Fuel>('electricity');
+  const [selecetedCar, setSelectedCar] = useState<Car | null>(null);
+  const [selecetedTrip, setSelectedTrip] = useState<Car | null>(null);
 
   function handleChange(event: { target: { value: string } }) {
-    setSelectedTripName(event.target.value);
+    const newSelectedCarName = event.target.value;
+    const car = R.find(R.propEq('name', newSelectedCarName))(
+      inputsQuery.data
+    ) as Car;
+    const trip = R.find(R.propEq('name', newSelectedCarName))(
+      tripsQuery.data
+    ) as Trip;
+    setSelectedTripName(newSelectedCarName);
+    setSelectedCar(car);
+    setSelectedTrip(trip);
+    if (car.classification === 'EV') {
+      setFuelType('electricity');
+    }
+    if (!car.classification && car.fuelType === 'Gasoline') {
+      setFuelType('gas');
+    }
   }
+
   function handleComparisonChange(event: { target: { value: string } }) {
     setComparsion(event.target.value as Comparison);
   }
@@ -38,10 +56,6 @@ function App() {
     return <span>No data</span>;
   }
 
-  const car = R.find(R.propEq('name', selectedTripName))(
-    inputsQuery.data
-  ) as Car;
-
   return (
     <div className="w-screen h-screen p-2 grid grid-rows-[auto_1fr]">
       <select
@@ -60,10 +74,11 @@ function App() {
         ))}
       </select>
       <div className="grid grid-rows-[1fr_auto]">
-        {selectedTripName ? (
+        {selecetedCar && selecetedTrip ? (
           <>
             <Chart
-              trips={tripsQuery.data}
+              trip={selecetedTrip}
+              car={selecetedCar}
               inputs={inputsQuery.data}
               tripName={selectedTripName}
               comparison={comparison}
@@ -84,7 +99,7 @@ function App() {
                   <option value="emissions">Emissions</option>
                 </select>
               </label>
-              {car?.classification === 'PHEV' ? (
+              {selecetedCar?.classification === 'PHEV' ? (
                 <label className="grow block">
                   <span className="text-gray-700">Plugin Hybrid Fuel Type</span>
                   <select

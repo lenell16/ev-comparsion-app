@@ -52,6 +52,7 @@ export function calcTrip({
       carName = `${carName} (Electricity Only)`;
     }
   }
+
   return MONTHS.map((month) => ({
     name: carName,
     month,
