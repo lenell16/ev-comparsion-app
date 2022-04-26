@@ -44,7 +44,6 @@ function Chart({
   carFuel,
 }: Props) {
   const audiQ7 = R.find(R.propEq('fuelType', 'Gasoline'))(inputs) as Car;
-  console.log(inputs);
   const audiData = calcTrip({
     fuel: 'gas',
     trip,
@@ -57,8 +56,6 @@ function Chart({
     car,
     comparison,
   });
-
-  console.log(carData);
 
   const savingsData = calcSavingsData(audiData, carData);
 
